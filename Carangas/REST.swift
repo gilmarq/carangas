@@ -57,12 +57,38 @@ class REST {
             
         }
         task.resume()
-        
-        
     }
-    
-    
-    
-    
-    
+    class func applyOperation(_ operation:RESTOperation,car: Car, onComplete:@escaping (Bool)->Void){
+        let URLString = basePath + "/" + (car._id ?? "")
+        var httpMethod: String = ""
+        switch operation {
+        case .delete:
+            httpMethod = "DELETE"
+        case .save:
+            httpMethod = "POST"
+        case .updade:
+            httpMethod = "PUT"
+        }
+        guard let url = URL(string: URLString) else {
+            onComplete(false)
+            return
+        }
+        var urlRequest =  URLRequest(url: url)
+        urlRequest.httpMethod = httpMethod
+        urlRequest.httpBody = try! JSONEncoder().encode(car)
+        let task = session.dataTask(with: urlRequest) { (data, _, _) in
+            guard let _ = data else {
+                onComplete(false)
+                return
+            }
+            onComplete(true)
+        }
+        task.resume()
+    }
 }
+enum RESTOperation{
+    case updade
+    case delete
+    case save
+}
+

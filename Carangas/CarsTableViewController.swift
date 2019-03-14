@@ -19,13 +19,20 @@ class CarsTableViewController: UITableViewController {
         REST.loadCars { [weak self] (loadeCars) in
            // guard let self = self else {return}  so para exibir
             self?.cars = loadeCars
-            //para execultar na main theard  que e a theard principal para elementos visuais 
+            //para execultar na main theard  que e a theard principal para elementos visuais    
             DispatchQueue.main.async {
                  self?.tableView.reloadData()
             }
            
         }
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? CarViewController{
+            vc.car = cars[tableView.indexPathForSelectedRow!.row]
+        }
+        
+    }
+    
     
     // MARK: - Table view data source
 
@@ -40,4 +47,20 @@ class CarsTableViewController: UITableViewController {
         cell.detailTextLabel?.text = car.brand
         return cell
     }
+    //MARK: - func para deletar
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let car = cars[indexPath.row]
+            
+            REST.applyOperation(.delete, car:car) { (sucess) in
+                if sucess {
+                     self.cars.remove(at: indexPath.row)
+                    DispatchQueue.main.async {
+                       tableView.deleteRows(at: [indexPath], with: .automatic)
+                    }
+                }
+            }
+        }
+    }
+    
 }

@@ -13,6 +13,16 @@ class CarViewController: UIViewController {
     @IBOutlet weak var lbGasType: UILabel!
     @IBOutlet weak var lbPrice: UILabel!
     @IBOutlet weak var loading: UIActivityIndicatorView!
+    var car: Car!
+    let formatter: NumberFormatter = {
+         let formatter = NumberFormatter()
+             formatter.numberStyle = .currency
+             formatter.locale = Locale(identifier: "pt-BR")
+             formatter.currencySymbol = "R$ "
+             formatter.alwaysShowsDecimalSeparator = true
+        
+        return formatter
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,5 +30,10 @@ class CarViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        lbBrand.text = car.brand
+        lbGasType.text = "Combustível: \(car.gas)"
+        title = car.name
+        lbPrice.text = formatter.string(from:NSNumber(value: car.price))
+        
     }
 }
