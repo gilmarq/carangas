@@ -11,19 +11,24 @@ class CarsTableViewController: UITableViewController {
     var cars: [Car] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+        refreshControl?.addTarget(self, action: #selector(loadCar), for: UIControl.Event.valueChanged)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+      loadCar()
+    }
+    @objc func loadCar(){
         //[weak self] referencia freca para nao deixa na memoria
         REST.loadCars { [weak self] (loadeCars) in
-           // guard let self = self else {return}  so para exibir
+            // guard let self = self else {return}  so para exibir
             self?.cars = loadeCars
-            //para execultar na main theard  que e a theard principal para elementos visuais    
+            //para execultar na main theard  que e a theard principal para elementos visuais
             DispatchQueue.main.async {
-                 self?.tableView.reloadData()
+                self?.tableView.reloadData()
             }
-           
+            
         }
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
