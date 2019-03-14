@@ -36,4 +36,9 @@ class CarViewController: UIViewController {
         lbPrice.text = formatter.string(from:NSNumber(value: car.price))
         
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? AddEditViewController{
+            vc.car = car
+        }
+    }
 }
